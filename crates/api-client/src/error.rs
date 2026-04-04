@@ -111,6 +111,11 @@ impl ApiError {
     pub fn other(message: impl Into<String>) -> Self {
         Self::Other(message.into())
     }
+
+    /// 创建网络错误
+    pub fn network(err: reqwest::Error) -> Self {
+        Self::Network(err)
+    }
 }
 
 impl From<String> for ApiError {

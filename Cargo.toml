@@ -45,6 +45,7 @@ once_cell = "1.19"
 uuid = { version = "1.6", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 rand = "0.8"
+	lru = "0.12"
 
 # CLI和终端
 clap = { version = "4.4", features = ["derive", "cargo"] }
@@ -94,6 +95,7 @@ once_cell = "1.19"
 uuid = { version = "1.6", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 rand = "0.8"
+	lru = "0.12"
 clap = { version = "4.4", features = ["derive", "cargo"] }
 console = "0.15"
 indicatif = "0.18"

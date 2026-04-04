@@ -140,6 +140,20 @@ impl Theme {
     pub fn info_color(&self) -> Color32 {
         Color32::from_rgb(33, 150, 243)
     }
+
+    /// Get Rust gold color (brand color for Rust implementation)
+    pub fn rust_color(&self) -> Color32 {
+        Color32::from_rgb(222, 165, 132) // Rust gold/orange: #DEA584
+    }
+
+    /// Get Rust logo colors as gradient stops
+    pub fn rust_gradient_colors(&self) -> [Color32; 3] {
+        [
+            Color32::from_rgb(222, 165, 132), // Light gold
+            Color32::from_rgb(204, 119, 74),  // Orange
+            Color32::from_rgb(161, 84, 48),   // Dark bronze
+        ]
+    }
 }
 
 impl Default for Theme {

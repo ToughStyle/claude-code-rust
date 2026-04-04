@@ -29,9 +29,30 @@ pub enum ToolError {
     #[error("JSON error: {0}")]
     JsonError(#[from] serde_json::Error),
 
+    /// API工具调用错误
+    #[error("API tool call error: {0}")]
+    ApiToolCallError(String),
+
     /// 其他错误
     #[error("Other error: {0}")]
     Other(String),
+}
+
+impl ToolError {
+    /// 创建API工具调用错误
+    pub fn api_tool_call(message: impl Into<String>) -> Self {
+        Self::ApiToolCallError(message.into())
+    }
+
+    /// 创建工具未找到错误
+    pub fn tool_not_found(name: impl Into<String>) -> Self {
+        Self::ToolNotFound(name.into())
+    }
+
+    /// 创建执行错误
+    pub fn execution(message: impl Into<String>) -> Self {
+        Self::ExecutionError(message.into())
+    }
 }
 
 /// 工具系统结果类型

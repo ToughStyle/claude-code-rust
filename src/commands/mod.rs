@@ -25,6 +25,8 @@ pub mod analytics;
 pub mod buddy;
 pub mod git;
 pub mod upgrade;
+pub mod conversation;
+pub mod system;
 
 // 重新导出主要类型
 pub use types::{Command, CommandContext, CommandResult, CommandBase};
@@ -46,6 +48,9 @@ pub use cli::{
 use crate::error::Result;
 use crate::state::AppState;
 use super::git::GitCommandLoader;
+use super::conversation::ConversationCommandLoader;
+use super::config::ConfigCommandLoader;
+use super::system::SystemCommandLoader;
 
 /// 初始化命令系统
 pub async fn init() -> Result<CommandManager> {
@@ -54,6 +59,9 @@ pub async fn init() -> Result<CommandManager> {
     // 注册核心命令加载器
     manager.add_loader(BuiltinCommandLoader);
     manager.add_loader(GitCommandLoader);
+    manager.add_loader(ConversationCommandLoader);
+    manager.add_loader(ConfigCommandLoader);
+    manager.add_loader(SystemCommandLoader);
 
     // 加载所有命令
     manager.load_all().await?;
@@ -71,6 +79,9 @@ pub async fn init_with_state(app_state: AppState) -> Result<CommandManager> {
     // 注册核心命令加载器
     manager.add_loader(BuiltinCommandLoader);
     manager.add_loader(GitCommandLoader);
+    manager.add_loader(ConversationCommandLoader);
+    manager.add_loader(ConfigCommandLoader);
+    manager.add_loader(SystemCommandLoader);
 
     // 注册 Buddy 命令加载器
     manager.add_loader(BuddyCommandLoader { app_state });

@@ -23,9 +23,11 @@ impl Default for ApiConfig {
     fn default() -> Self {
         Self {
             api_key: std::env::var("ANTHROPIC_API_KEY").ok()
+                .or(std::env::var("ANTHROPIC_AUTH_TOKEN").ok())
                 .or(std::env::var("DASHSCOPE_API_KEY").ok())
                 .or(std::env::var("DEEPSEEK_API_KEY").ok()),
             base_url: std::env::var("API_BASE_URL")
+                .or(std::env::var("ANTHROPIC_BASE_URL").ok())
                 .unwrap_or_else(|_| "https://api.anthropic.com".to_string()),
             max_tokens: 4096,
             timeout: 120,
@@ -39,6 +41,7 @@ impl ApiConfig {
     /// Get the API key, checking environment variable first
     pub fn get_api_key(&self) -> Option<String> {
         std::env::var("ANTHROPIC_API_KEY").ok()
+            .or(std::env::var("ANTHROPIC_AUTH_TOKEN").ok())
             .or(std::env::var("DASHSCOPE_API_KEY").ok())
             .or(std::env::var("DEEPSEEK_API_KEY").ok())
             .or(self.api_key.clone())
@@ -47,11 +50,19 @@ impl ApiConfig {
     /// Get the base URL, checking environment variable first
     pub fn get_base_url(&self) -> String {
         std::env::var("API_BASE_URL")
+            .or(std::env::var("ANTHROPIC_BASE_URL").ok())
             .unwrap_or_else(|_| self.base_url.clone())
     }
 
     /// Get the model ID for the given model name
     pub fn get_model_id(&self, model: &str) -> String {
+        let model_from_env = std::env::var("ANTHROPIC_MODEL").ok()
+            .or(std::env::var("CLAUDE_MODEL").ok());
+        
+        if let Some(env_model) = model_from_env {
+            return env_model;
+        }
+        
         match model {
             "opus" => "claude-3-opus-20240229".to_string(),
             "sonnet" => "claude-3-5-sonnet-20241022".to_string(),

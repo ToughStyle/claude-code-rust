@@ -54,10 +54,27 @@ pub struct ChatPanel {
 
 impl Default for ChatPanel {
     fn default() -> Self {
+        // Rust金色Logo ASCII艺术和欢迎语
+        let welcome_message = format!(
+            "🦀 {rust_logo} {rust_version}
+
+✨ 欢迎使用 Claude Code Rust 重构版！
+   Welcome to Claude Code Rust Edition!
+
+🚀 高性能 Rust 实现 | High-performance Rust Implementation
+⚡ 内存安全保证 | Memory Safety Guaranteed
+🦀 编译为原生二进制 | Compiled to Native Binary
+
+💡 支持斜杠命令如 /commit, /diff, /review, /model 等
+💡 Type '/' to see available commands
+
+有什么可以帮助您的吗？How can I help you today?",
+            rust_logo = "[█ RUST █]",
+            rust_version = env!("CARGO_PKG_VERSION")
+        );
+
         Self {
-            messages: vec![ChatMessage::system(
-                "Welcome to Claude Code Rust! (High-performance implementation) How can I help you today?"
-            )],
+            messages: vec![ChatMessage::system(welcome_message)],
             input_text: String::new(),
             is_loading: false,
             scroll_to_bottom: true,
@@ -337,9 +354,11 @@ impl ChatPanel {
     /// Clear all messages
     pub fn clear_messages(&mut self) {
         self.messages.clear();
-        self.messages.push(ChatMessage::system(
-            "Welcome to Claude Code! How can I help you today?"
-        ));
+        let welcome_message = format!(
+            "🦀 [█ RUST █] {version}\n\n✨ 欢迎使用 Claude Code Rust 重构版！\n💡 输入 '/' 查看可用命令",
+            version = env!("CARGO_PKG_VERSION")
+        );
+        self.messages.push(ChatMessage::system(welcome_message));
     }
 
     /// Set loading state
