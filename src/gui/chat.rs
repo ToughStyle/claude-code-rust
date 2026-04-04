@@ -56,7 +56,7 @@ impl Default for ChatPanel {
     fn default() -> Self {
         Self {
             messages: vec![ChatMessage::system(
-                "Welcome to Claude Code! How can I help you today?"
+                "Welcome to Claude Code Rust! (High-performance implementation) How can I help you today?"
             )],
             input_text: String::new(),
             is_loading: false,

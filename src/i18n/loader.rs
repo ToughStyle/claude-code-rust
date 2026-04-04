@@ -71,7 +71,7 @@ impl LocaleLoader {
 
     fn load_english(locale: &mut Locale) {
         let messages = vec![
-            ("app.name", "Claude Code"),
+            ("app.name", "Claude Code Rust"),
             ("app.description", "AI-powered code assistant"),
             ("menu.file", "File"),
             ("menu.edit", "Edit"),
@@ -155,7 +155,7 @@ impl LocaleLoader {
 
     fn load_french(locale: &mut Locale) {
         let messages = vec![
-            ("app.name", "Claude Code"),
+            ("app.name", "Claude Code Rust"),
             ("app.description", "Assistant de code alimenté par IA"),
             ("menu.file", "Fichier"),
             ("menu.edit", "Éditer"),
@@ -176,7 +176,7 @@ impl LocaleLoader {
 
     fn load_german(locale: &mut Locale) {
         let messages = vec![
-            ("app.name", "Claude Code"),
+            ("app.name", "Claude Code Rust"),
             ("app.description", "KI-gestützter Code-Assistent"),
             ("menu.file", "Datei"),
             ("menu.edit", "Bearbeiten"),

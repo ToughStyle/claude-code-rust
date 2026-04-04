@@ -87,7 +87,7 @@ impl eframe::App for ClaudeCodeApp {
                 ui.horizontal(|ui| {
                     // Title
                     ui.heading(
-                        egui::RichText::new("Claude Code")
+                        egui::RichText::new("Claude Code Rust")
                             .color(self.theme.primary_color())
                             .size(20.0)
                     );
@@ -233,7 +233,7 @@ pub fn run_gui() -> eframe::Result {
     };
 
     eframe::run_native(
-        "Claude Code",
+        "Claude Code Rust",
         options,
         Box::new(|cc| Ok(Box::new(ClaudeCodeApp::new(cc)))),
     )

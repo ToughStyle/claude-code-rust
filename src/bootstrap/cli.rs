@@ -247,7 +247,7 @@ pub async fn execute_fast_path(path: CliFastPath) -> Result<()> {
 /// 
 /// 零模块加载的快速路径，直接输出版本号。
 fn execute_version() {
-    println!("{} (Claude Code)", get_version());
+    println!("{} (Claude Code Rust - High-performance implementation)", get_version());
 }
 
 /// 执行系统提示导出

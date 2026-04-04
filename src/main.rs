@@ -1,4 +1,4 @@
-//! Claude Code - AI-powered coding assistant
+//! Claude Code Rust - High-performance AI coding assistant
 //! 
 //! Main entry point for the Claude Code CLI application.
 
@@ -7,7 +7,7 @@ use claude_code_rs::{commands, config, error::Result, state};
 use std::process;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-/// Claude Code - AI-powered coding assistant
+/// Claude Code Rust - High-performance AI coding assistant
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
@@ -309,7 +309,7 @@ async fn run(cli: Cli) -> Result<()> {
 
 /// Print help information
 fn print_help() {
-    println!("Claude Code - AI-powered coding assistant");
+    println!("Claude Code Rust - High-performance AI coding assistant");
     println!();
     println!("Usage:");
     println!("  claude [COMMAND]");

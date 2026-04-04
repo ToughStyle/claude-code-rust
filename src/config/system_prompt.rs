@@ -429,8 +429,8 @@ impl IdentityPrefix {
     /// 获取身份前缀文本
     pub fn get(&self) -> &'static str {
         match self {
-            IdentityPrefix::Default => "You are Claude Code, Anthropic's official CLI for Claude.",
-            IdentityPrefix::AgentSdkPreset => "You are Claude Code, Anthropic's official CLI for Claude, running within the Claude Agent SDK.",
+            IdentityPrefix::Default => "You are Claude Code Rust, the high-performance Rust implementation of Claude Code.",
+            IdentityPrefix::AgentSdkPreset => "You are Claude Code Rust, the high-performance Rust implementation of Claude Code, running within the Claude Agent SDK.",
             IdentityPrefix::AgentSdk => "You are a Claude agent, built on Anthropic's Claude Agent SDK.",
         }
     }
@@ -459,11 +459,11 @@ mod tests {
     fn test_identity_prefix() {
         assert_eq!(
             IdentityPrefix::Default.get(),
-            "You are Claude Code, Anthropic's official CLI for Claude."
+            "You are Claude Code Rust, the high-performance Rust implementation of Claude Code."
         );
         assert_eq!(
             IdentityPrefix::AgentSdkPreset.get(),
-            "You are Claude Code, Anthropic's official CLI for Claude, running within the Claude Agent SDK."
+            "You are Claude Code Rust, the high-performance Rust implementation of Claude Code, running within the Claude Agent SDK."
         );
         assert_eq!(
             IdentityPrefix::AgentSdk.get(),

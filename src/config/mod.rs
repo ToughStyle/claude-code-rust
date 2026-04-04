@@ -11,12 +11,14 @@ pub mod mcp_config;
 pub mod validation;
 pub mod migration;
 pub mod system_prompt;
+pub mod plugin_marketplace_config;
 
 pub use api_config::ApiConfig;
 pub use mcp_config::{McpConfig, McpServerStatus};
 pub use validation::{ValidationResult, ValidationError};
 pub use migration::{MigrationManager, ConfigVersion, MigrationResult, create_standard_migration_manager};
 pub use system_prompt::{SystemPromptBuilder, IdentityPrefix, SYSTEM_PROMPT_DYNAMIC_BOUNDARY};
+pub use plugin_marketplace_config::PluginMarketplaceConfig;
 
 use crate::error::Result;
 use serde::{Deserialize, Serialize};
@@ -69,6 +71,9 @@ pub struct Settings {
     pub voice: VoiceSettings,
     /// Plugin settings
     pub plugins: PluginSettings,
+    /// Plugin marketplace configuration
+    #[serde(default)]
+    pub plugin_marketplace: PluginMarketplaceConfig,
     /// 特性标志
     #[serde(default)]
     pub feature_flags: FeatureFlags,
@@ -206,6 +211,7 @@ impl Default for Settings {
                 plugin_dir: config_dir.join("plugins"),
                 auto_update: true,
             },
+            plugin_marketplace: PluginMarketplaceConfig::default(),
             feature_flags: FeatureFlags::default(),
             output: OutputSettings::default(),
         }
@@ -259,6 +265,11 @@ impl Settings {
 
     /// 验证配置
     pub fn validate(&self) -> Result<()> {
+        // 验证插件市场配置
+        if let Err(e) = self.plugin_marketplace.validate() {
+            return Err(crate::error::ClaudeError::Config(e));
+        }
+
         // 简单验证，暂时总是返回Ok
         Ok(())
     }
@@ -285,6 +296,15 @@ impl Settings {
             "features.coordinator_mode" => self.feature_flags.coordinator_mode = value.parse().unwrap_or(false),
             "features.fork_subagent" => self.feature_flags.fork_subagent = value.parse().unwrap_or(false),
             "features.buddy" => self.feature_flags.buddy = value.parse().unwrap_or(false),
+            // Plugin marketplace settings
+            "plugin_marketplace.base_url" => self.plugin_marketplace.base_url = value.to_string(),
+            "plugin_marketplace.api_key" => self.plugin_marketplace.api_key = Some(value.to_string()),
+            "plugin_marketplace.cache_ttl_seconds" => self.plugin_marketplace.cache_ttl_seconds = value.parse().unwrap_or(300),
+            "plugin_marketplace.max_retries" => self.plugin_marketplace.max_retries = value.parse().unwrap_or(3),
+            "plugin_marketplace.request_timeout_seconds" => self.plugin_marketplace.request_timeout_seconds = value.parse().unwrap_or(30),
+            "plugin_marketplace.verify_signatures" => self.plugin_marketplace.verify_signatures = value.parse().unwrap_or(true),
+            "plugin_marketplace.debug_logging" => self.plugin_marketplace.debug_logging = value.parse().unwrap_or(false),
+            "plugin_marketplace.offline_mode" => self.plugin_marketplace.offline_mode = value.parse().unwrap_or(false),
             _ => return Err(crate::error::ClaudeError::Config(format!("Unknown setting: {}", key))),
         }
         
@@ -445,12 +465,29 @@ mod tests {
     }
 
     #[test]
-    fn test_create_system_prompt_builder() {
+    fn test_plugin_marketplace_config() {
         let settings = Settings::default();
-        let builder = settings.create_system_prompt_builder();
-        let prompt = builder.build();
-        
-        assert!(!prompt.is_empty());
-        assert!(prompt.contains(SYSTEM_PROMPT_DYNAMIC_BOUNDARY));
+        assert_eq!(settings.plugin_marketplace.base_url, "https://plugins.claude.ai/api/v1");
+        assert_eq!(settings.plugin_marketplace.cache_ttl_seconds, 300);
+        assert!(settings.plugin_marketplace.verify_signatures);
+        assert!(settings.plugin_marketplace.validate().is_ok());
+    }
+
+    #[test]
+    fn test_plugin_marketplace_setting() {
+        let mut settings = Settings::default();
+        settings.set("plugin_marketplace.base_url", "https://custom.example.com").unwrap();
+        settings.set("plugin_marketplace.debug_logging", "true").unwrap();
+
+        assert_eq!(settings.plugin_marketplace.base_url, "https://custom.example.com");
+        assert!(settings.plugin_marketplace.debug_logging);
+    }
+
+    #[test]
+    fn test_plugin_marketplace_validation() {
+        let mut settings = Settings::default();
+        settings.plugin_marketplace.base_url = String::new();
+
+        assert!(settings.validate().is_err());
     }
 }

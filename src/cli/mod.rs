@@ -10,7 +10,7 @@ pub use repl::Repl;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
-/// Claude Code - AI-powered coding assistant
+/// Claude Code Rust - High-performance AI coding assistant
 #[derive(Parser, Debug)]
 #[command(name = "claude-code")]
 #[command(author = "Anthropic")]

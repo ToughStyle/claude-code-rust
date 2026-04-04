@@ -1,0 +1,11 @@
+{
+  "name": "claude-code-rust-bin",
+  "version": "0.1.1",
+  "description": "Binary distribution for Claude Code Rust",
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "bin": {
+    "claude": "./claude.exe",
+    "claude-code": "./claude.exe"
+  }
+}

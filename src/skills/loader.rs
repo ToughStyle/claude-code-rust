@@ -141,7 +141,7 @@ impl Skill for HelpSkill {
         let help_text = match args {
             Some("skills") => "可用技能:\n- help: 显示帮助信息\n- list-skills: 列出所有技能\n- version: 显示版本信息\n- config-check: 检查配置",
             Some("commands") => "可用命令:\n- /help: 显示帮助\n- /skills: 列出技能\n- /version: 显示版本\n- /config: 检查配置",
-            _ => "Claude Code 技能系统\n\n用法:\n- /help [topic]: 显示帮助信息\n- /skills: 列出所有可用技能\n- /version: 显示版本信息\n- /config-check: 检查系统配置\n\n输入 /help skills 查看技能列表，输入 /help commands 查看命令列表",
+            _ => "Claude Code Rust 技能系统\n\n用法:\n- /help [topic]: 显示帮助信息\n- /skills: 列出所有可用技能\n- /version: 显示版本信息\n- /config-check: 检查系统配置\n\n输入 /help skills 查看技能列表，输入 /help commands 查看命令列表",
         };
 
         Ok(SkillResult::success(

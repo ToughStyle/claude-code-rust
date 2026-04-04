@@ -9,7 +9,7 @@ use crate::error::Result;
 pub async fn login(settings: Settings) -> Result<()> {
     tracing::info!("Starting login process");
     
-    println!("Claude Code Login");
+    println!("Claude Code Rust Login");
     println!();
     println!("Please visit https://console.anthropic.com/ to get your API key");
     println!();

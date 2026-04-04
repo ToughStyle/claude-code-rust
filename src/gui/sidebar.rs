@@ -65,7 +65,7 @@ impl Sidebar {
                         // Header with collapse button
                         ui.horizontal(|ui| {
                             if !self.collapsed {
-                                ui.heading(RichText::new("Claude Code")
+                                ui.heading(RichText::new("Claude Code Rust")
                                     .color(theme.primary_color())
                                     .size(18.0));
                                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {

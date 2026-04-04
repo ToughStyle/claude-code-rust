@@ -38,7 +38,7 @@ pub async fn run(settings: Settings, state: AppState) -> Result<()> {
     // 使用设置作为配置
     let config = settings;
     
-    cli.success("Claude Code Interactive Mode");
+    cli.success("Claude Code Rust Interactive Mode");
     cli.info("Type 'exit' or Ctrl+D to quit");
     cli.info("Type 'help' for available commands");
     cli.info("");
