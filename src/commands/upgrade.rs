@@ -1,6 +1,6 @@
 //! 升级命令模块
-//!
-//! 实现Claude Code的升级功能，包括GitHub版本检查和更新下载
+//! 
+//! 实现Claude Code的升级功能，包括GitHub版本检查、代码拉取和更新
 
 use crate::error::Result;
 use crate::commands::types::{Command, CommandBase, CommandContext, CommandResult, LocalCommand, LoadedFrom};
@@ -9,23 +9,29 @@ use async_trait::async_trait;
 use reqwest::Client;
 use serde_json::Value;
 use std::env;
+use std::process::Command as SystemCommand;
 
 /// 升级命令
 pub struct UpgradeCommand;
 
 #[async_trait]
 impl CmdExecutor for UpgradeCommand {
-    async fn execute(&self, _context: CommandContext) -> Result<CommandResult> {
-        match check_for_updates().await {
-            Ok(message) => Ok(CommandResult {
-                content: message,
-                ..Default::default()
-            }),
-            Err(e) => Ok(CommandResult {
-                content: format!("Failed to check for updates: {}", e),
-                ..Default::default()
-            }),
-        }
+    async fn execute(&self, context: CommandContext) -> Result<CommandResult> {
+        let args = context.args.unwrap_or_default();
+        let message = if args.len() > 0 {
+            match args[0].as_str() {
+                "check" => check_for_updates().await?,
+                "execute" => execute_upgrade()?,
+                _ => format!("Invalid argument. Usage: claude upgrade [check|execute]"),
+            }
+        } else {
+            check_for_updates().await?
+        };
+        
+        Ok(CommandResult {
+            content: message,
+            ..Default::default()
+        })
     }
 
     fn command(&self) -> Command {
@@ -38,7 +44,7 @@ impl CmdExecutor for UpgradeCommand {
                 availability: None,
                 is_hidden: None,
                 is_mcp: None,
-                argument_hint: None,
+                argument_hint: Some("[check|execute]".to_string()),
                 when_to_use: None,
                 version: None,
                 disable_model_invocation: None,
@@ -64,7 +70,7 @@ async fn check_for_updates() -> Result<String> {
             return Ok(format!(
                 "Failed to fetch latest version from GitHub: {}\n\
                  Current version: {}\n\
-                 Please check https://github.com/anthropics/claude-code for updates.",
+                 Please check https://github.com/lorryjovens-hub/claude-code-rust for updates.",
                 e, current_version
             ));
         }
@@ -73,7 +79,9 @@ async fn check_for_updates() -> Result<String> {
     // 简单的版本比较（语义化版本比较需要更复杂的逻辑）
     if latest_version == current_version {
         return Ok(format!(
-            "Claude Code Rust is up to date! (v{})",
+            "Claude Code Rust is up to date! (v{})
+\
+             Last checked: just now",
             current_version
         ));
     }
@@ -81,23 +89,52 @@ async fn check_for_updates() -> Result<String> {
     // 有新版本可用
     Ok(format!(
         "New version available: v{} (current: v{})\n\
-         \n\
+         \
          To upgrade:\n\
-         1. Visit https://github.com/anthropics/claude-code/releases\n\
-         2. Download the latest release\n\
-         3. Follow installation instructions\n\
-         \n\
-         Or build from source:\n\
-         git pull origin main\n\
-         cargo build --release",
+         1. Automatic upgrade (recommended):\n\
+            claude upgrade execute\n\
+         2. Manual upgrade:\n\
+            git pull origin master\n\
+            cargo build --release\n\
+         3. Download pre-built binary:\n\
+            Visit https://github.com/lorryjovens-hub/claude-code-rust/releases",
         latest_version, current_version
     ))
+}
+
+/// 执行升级
+fn execute_upgrade() -> Result<String> {
+    // 执行git pull
+    match SystemCommand::new("git").args(["pull", "origin", "master"]).output() {
+        Ok(output) => {
+            if !output.status.success() {
+                return Err(format!("Git pull failed: {}", String::from_utf8_lossy(&output.stderr)).into());
+            }
+        }
+        Err(e) => {
+            return Err(format!("Failed to execute git: {}", e).into());
+        }
+    }
+
+    // 执行cargo build --release
+    match SystemCommand::new("cargo").args(["build", "--release"]).output() {
+        Ok(output) => {
+            if !output.status.success() {
+                return Err(format!("Cargo build failed: {}", String::from_utf8_lossy(&output.stderr)).into());
+            }
+        }
+        Err(e) => {
+            return Err(format!("Failed to execute cargo: {}", e).into());
+        }
+    }
+
+    Ok("Upgrade completed successfully! Please restart Claude Code Rust to use the new version.".to_string())
 }
 
 /// 从GitHub API获取最新版本
 async fn fetch_latest_version_from_github() -> Result<String> {
     let client = Client::new();
-    let url = "https://api.github.com/repos/anthropics/claude-code/releases/latest";
+    let url = "https://api.github.com/repos/lorryjovens-hub/claude-code-rust/releases/latest";
 
     let response = client
         .get(url)
@@ -127,9 +164,27 @@ async fn fetch_latest_version_from_github() -> Result<String> {
 }
 
 /// 运行升级命令（CLI入口点）
-pub async fn run() -> Result<()> {
-    let message = check_for_updates().await?;
-    println!("{}", message);
+pub async fn run(args: &[String]) -> Result<()> {
+    if args.len() > 1 {
+        match args[1].as_str() {
+            "check" => {
+                let message = check_for_updates().await?;
+                println!("{}", message);
+            }
+            "execute" => {
+                match execute_upgrade() {
+                    Ok(message) => println!("{}", message),
+                    Err(e) => println!("Upgrade failed: {}", e),
+                }
+            }
+            _ => {
+                println!("Invalid argument. Usage: claude upgrade [check|execute]");
+            }
+        }
+    } else {
+        let message = check_for_updates().await?;
+        println!("{}", message);
+    }
     Ok(())
 }
 

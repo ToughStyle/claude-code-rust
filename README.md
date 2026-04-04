@@ -320,9 +320,33 @@ claude version
 # 检查更新
 claude upgrade check
 
-# 执行升级
+# 执行自动升级（推荐）
 claude upgrade execute
+
+# 手动升级
+# 1. 拉取最新代码
+git pull origin master
+# 2. 重新编译
+cargo build --release
 ```
+
+#### 升级命令说明
+
+- **`claude upgrade check`** - 检查是否有新版本可用
+- **`claude upgrade execute`** - 自动拉取最新代码并重新编译
+- **手动升级** - 当自动升级失败时，可以使用git和cargo命令手动升级
+
+#### 升级流程
+
+1. **检查更新**：运行 `claude upgrade check` 查看是否有新版本
+2. **执行升级**：运行 `claude upgrade execute` 自动完成升级
+3. **重启应用**：升级完成后需要重启Claude Code Rust以使用新版本
+
+#### 常见问题
+
+- **自动升级失败**：通常是因为网络问题或权限问题，可以尝试手动升级
+- **编译错误**：如果编译失败，可能需要更新Rust工具链或解决依赖问题
+- **版本检查失败**：如果无法连接GitHub API，可以直接访问GitHub仓库查看最新版本
 
 ## 🔧 开发指南
 
